@@ -17,9 +17,13 @@ if not os.path.exists(RAW_PATH):
     raise FileNotFoundError(f"Dataset not found: {RAW_PATH}")
 
 df = pd.read_csv(RAW_PATH)
+
 missing = [c for c in required_columns if c not in df.columns]
 if missing:
     raise ValueError(f"Dataset is missing expected columns: {missing}")
+
+if not set(df["Engine Condition"].unique()).issubset({0, 1}):
+    raise ValueError("Engine Condition must contain only 0 and 1.")
 
 print("Dataset registered and validated successfully.")
 print(f"Rows: {df.shape[0]}")
