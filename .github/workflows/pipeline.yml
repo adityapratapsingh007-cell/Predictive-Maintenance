@@ -68,7 +68,7 @@ jobs:
           name: data-splits
       - name: Model Building and Evaluation
         run: |
-          python predictive_maintenance/model_building/train.py
+          export MLFLOW_ALLOW_FILE_STORE=true && python predictive_maintenance/model_building/train.py
       - name: Verify Trained Model
         run: |
           test -f predictive_maintenance/deployment/model.joblib
