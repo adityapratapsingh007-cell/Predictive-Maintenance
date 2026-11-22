@@ -10,6 +10,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 
+# MLflow 3.x deprecates the plain file store; this keeps the local ./mlruns folder working.
+os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
 mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("predictive-maintenance")
 
