@@ -4,13 +4,10 @@ from sklearn.model_selection import train_test_split
 
 RAW_PATH = "predictive_maintenance/data/engine_data.csv"
 
-# 1. Load directly from the repository data folder
 if not os.path.exists(RAW_PATH):
     raise FileNotFoundError(f"Dataset not found: {RAW_PATH}")
-df = pd.read_csv(RAW_PATH)
 
-# 2. Clean: remove duplicate rows. No identifier / timestamp columns exist, so only the
-#    six sensor features and the target are kept (all other columns would be dropped here).
+df = pd.read_csv(RAW_PATH)
 df = df.drop_duplicates().reset_index(drop=True)
 
 features = [
@@ -30,7 +27,6 @@ if missing:
 X = df[features]
 y = df[target].astype(int)
 
-# 3. Stratified 80/20 split, then save locally
 Xtrain, Xtest, ytrain, ytest = train_test_split(
     X, y, test_size=0.20, random_state=42, stratify=y
 )
@@ -43,7 +39,4 @@ ytest.to_csv("ytest.csv", index=False)
 print("Data preparation completed successfully.")
 print("Training shape:", Xtrain.shape)
 print("Testing shape:", Xtest.shape)
-print("Training class proportion:")
 print(ytrain.value_counts(normalize=True).round(4))
-print("Testing class proportion:")
-print(ytest.value_counts(normalize=True).round(4))
