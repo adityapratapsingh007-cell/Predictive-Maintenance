@@ -10,20 +10,35 @@ st.set_page_config(
 )
 
 try:
-    base_dir = os.path.dirname(__file__)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
 except NameError:
     base_dir = os.getcwd()
 
-MODEL_PATH = os.path.join(base_dir, "model.joblib")
-if not os.path.exists(MODEL_PATH):
-    MODEL_PATH = os.path.join(
-        base_dir, "predictive_maintenance", "deployment", "model.joblib"
-    )
+MODEL_CANDIDATES = [
+    os.path.join(base_dir, "model.joblib"),
+    os.path.join(base_dir, "predictive_maintenance", "deployment", "model.joblib"),
+]
 
-model = joblib.load(MODEL_PATH)
+
+@st.cache_resource
+def load_model():
+    for path in MODEL_CANDIDATES:
+        if os.path.exists(path):
+            return joblib.load(path)
+    return None
+
+
+model = load_model()
 
 st.title("🔧 Predictive Maintenance")
 st.write("Enter engine sensor readings to predict the engine condition.")
+
+if model is None:
+    st.error(
+        "Trained model not found. Run the GitHub Actions pipeline so that "
+        "predictive_maintenance/deployment/model.joblib is committed to the repository."
+    )
+    st.stop()
 
 Engine_rpm = st.number_input("Engine RPM", min_value=0.0, value=700.0)
 Lub_oil_pressure = st.number_input("Lub Oil Pressure", min_value=0.0, value=3.3)
